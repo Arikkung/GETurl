@@ -4,11 +4,7 @@
   "description": "AWS Lambda function for GET /url using TypeScript",
   "main": "dist/handler/GETredirect.js",
   "scripts": {
-    "build": "tsc",
-    "deploy": "npm run build && terraform apply -auto-approve",
-    "destroy": "terraform destroy -auto-approve",
-    "lint": "eslint . --ext .ts",
-    "prepare": "npm run build && terraform init"
+    "build": "tsc"
   },
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.400.0",
