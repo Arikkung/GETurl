@@ -1,0 +1,47 @@
+name: Deploy Redirect Lambda
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: GetCatalogInferno/app
+
+      - name: Build TypeScript
+        run: npm run build
+        working-directory: GetCatalogInferno/app
+
+      - name: Zip Lambda package
+        run: |
+          cd GetCatalogInferno/app
+          zip -r ../terraform/lambda.zip dist node_modules package.json
+        shell: bash
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Init
+        run: terraform init
+        working-directory: GetCatalogInferno/terraform
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve
+        working-directory: GetCatalogInferno/terraform
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: us-east-2
