@@ -19,15 +19,15 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
-        working-directory: GetUrlCode/app
+        working-directory: app
 
       - name: Build TypeScript
         run: npm run build
-        working-directory: GetUrlCode/app
+        working-directory: app
 
       - name: Zip Lambda package
         run: |
-          cd GetUrlCode/app
+          cd app
           zip -r ../terraform/lambda.zip dist node_modules package.json
         shell: bash
 
@@ -36,11 +36,11 @@ jobs:
 
       - name: Terraform Init
         run: terraform init
-        working-directory: GetUrlCode/terraform
+        working-directory: terraform
 
       - name: Terraform Apply
         run: terraform apply -auto-approve
-        working-directory: GetUrlCode/terraform
+        working-directory: terraform
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
